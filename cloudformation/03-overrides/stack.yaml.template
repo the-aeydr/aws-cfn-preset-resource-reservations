@@ -1,0 +1,95 @@
+---
+# A CloudFormation Template provides a preset type mapping, which contains a set of instance types by preset.
+# It supports a parameter `InstanceType` that can be used to override the preset instance type.
+AWSTemplateFormatVersion: "2010-09-09"
+
+
+# The empty resource configuration that allows for testing against just mappings, parameters, and
+# outputs. To force a new update, the `LogicalID` of this must be re-generated as this resource
+# does not support updates.
+Resources:
+  WaitHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+
+# -------------------------------------------------
+Description: Preset resource reservations with override support
+Metadata:
+  PresetTypeMapping:
+    Description: |
+      A tree structure for which each node contains a set of properties, which will
+      be used as presets within the CloudFormation Template.
+
+      The tree structure is visualized as such:
+      .
+      |-- default
+      |   |-- scaled
+      |
+      |-- perf
+      |   |-- loadopt
+      |   |-- memopt
+      |
+      |-- standby
+
+Parameters:
+  PresetType:
+    Description: An Infrastructure Path comprising of varying combinations of CPU, memory, storage and networking capcity.
+    ConstraintDescription: must be the path to a node contained within the Mapping 'PresetTypeMapping'
+    Type: String
+    Default: standby
+    AllowedValues:
+      - standby
+      - default
+      - default.scaled
+      - perf
+      - perf.memopt
+      - perf.loadopt
+  InstanceType:
+    Description: Override the preset instance. If left blank, InstanceType will be determined by the presets (InfrastructurePath).
+    Type: String
+    Default: ""
+    ConstraintDescription: must be a valid EC2 instance type, or blank
+    AllowedValues:
+      - ""
+      - t1.micro
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+
+Conditions:
+  IsInstanceTypeDefault:
+    Fn::Equals:
+      - Ref: InstanceType
+      - ""
+
+Mappings:
+  PresetTypeMapping:
+    standby:
+      InstanceType: t1.micro
+    default:
+      InstanceType: t2.nano
+    default.scaled:
+      InstanceType: t2.micro
+    perf:
+      InstanceType: t2.small
+    perf.memopt:
+      InstanceType: t2.medium
+    perf.loadopt:
+      InstanceType: t2.large
+
+Outputs:
+  PresetType:
+    Description: The value of the Parameter 'PresetType'
+    Value:
+      Ref: PresetType
+  InstanceType:
+    Description: The 'InstanceType' from the presets, unless overwritten by the parameter 'InstanceType'
+    Value:
+      Fn::If:
+        - IsInstanceTypeDefault
+        - Fn::FindInMap:
+            - PresetTypeMapping
+            - Ref: PresetType
+            - InstanceType
+        - Ref: InstanceType

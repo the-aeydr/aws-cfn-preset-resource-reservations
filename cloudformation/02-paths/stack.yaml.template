@@ -1,0 +1,72 @@
+---
+# A CloudFormation Template that contains the preset type mapping, a parameter for selecting from that mapping, and a
+# set of outputs showing the preset type, and the selected instance type.
+AWSTemplateFormatVersion: "2010-09-09"
+
+# The empty resource configuration that allows for testing against just mappings, parameters, and
+# outputs. To force a new update, the `LogicalID` of this must be re-generated as this resource
+# does not support updates.
+Resources:
+  WaitHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+
+# -------------------------------------------------
+Description: Preset resource reservations controlled by a parameter
+Metadata:
+  PresetTypeMapping:
+    Description: |
+      A tree structure for which each node contains a set of properties, which will
+      be used as presets within the CloudFormation Template.
+
+      The tree structure is visualized as such:
+      .
+      |-- default
+      |   |-- scaled
+      |
+      |-- perf
+      |   |-- loadopt
+      |   |-- memopt
+      |
+      |-- standby
+
+Parameters:
+  PresetType:
+    Description: An Infrastructure Path comprising of varying combinations of CPU, memory, storage and networking capcity.
+    ConstraintDescription: must be the path to a node contained within the Mapping 'PresetTypeMapping'
+    Type: String
+    Default: standby
+    AllowedValues:
+      - standby
+      - default
+      - default.scaled
+      - perf
+      - perf.memopt
+      - perf.loadopt
+
+Mappings:
+  PresetTypeMapping:
+    standby:
+      InstanceType: t1.micro
+    default:
+      InstanceType: t2.nano
+    default.scaled:
+      InstanceType: t2.micro
+    perf:
+      InstanceType: t2.small
+    perf.memopt:
+      InstanceType: t2.medium
+    perf.loadopt:
+      InstanceType: t2.large
+
+Outputs:
+  PresetType:
+    Description: The value of the Parameter 'PresetType'
+    Value:
+      Ref: PresetType
+  InstanceType:
+    Description: The 'InstanceType' from the presets, as defined by `PresetType`
+    Value:
+      Fn::FindInMap:
+        - PresetTypeMapping
+        - Ref: PresetType
+        - InstanceType

@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: aws-cfn-preset-resource-reservations
+  description: Using CloudFormation Mappings to define preset cpu, memory or instance types for rightsizing infrastructure
+  tags:
+    - aws
+    - aws
+  annotations:
+    displayName: Using CloudFormation Mappings to define preset resource reservations for rightsizing
+    github.com/project-slug: the-aeydr/aws-cfn-preset-resource-reservations
+spec:
+  type: documentation
+  lifecycle: experimental

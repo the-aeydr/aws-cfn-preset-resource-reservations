@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+
+title: "AWS CloudFormation Presets for Resource Reservations"
+url: "https://github.com/theaeydr/aws-cfn-preset-resource-reservations"
+authors:
+- given-names: "aeydr"
+  orcid: "https://orcid.org/0000-0000-0000-0000"
+
+version: 1.0.0
+date-released: 2023-03-04
+doi: 10.5281/zenodo.1234
+
+preferred-citation:
+  type: article
+  journal: "The Architectural Decision Record"
+  title: "AWS CloudFormation Presets for Resource Reservations"
+  authors:
+  - given-names: "aeydr"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+
+  doi: "10.0000/00000"
+  month: 03
+  year: 2023
+  
+  
+
+  

@@ -1,0 +1,17 @@
+---
+# A CloudFormation Template that contains no resources, allowing for an "empty" CloudFormation stack to be created.
+
+# CloudFormation Stacks require at minimum one resource to be defined, and using the `WaitConditionHandle` allows this
+# condition to be satisified, without requiring the CloudFormation Stack to provision any "unnecessary" resources. This makes
+# it easier when experimenting with function oriented transformations (FindInMap/Mappings/etc).
+AWSTemplateFormatVersion: '2010-09-09'
+
+# The empty resource configuration that allows for testing against just mappings, parameters, and
+# outputs. To force a new update, the `LogicalID` of this must be re-generated as this resource
+# does not support updates.
+Resources:
+  WaitHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+
+# -------------------------------------------------
+Description: An empty CloudFormation Template
